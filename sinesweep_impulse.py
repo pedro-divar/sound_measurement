@@ -3,6 +3,7 @@ from numpy.fft import rfft, irfft
 import soundfile as sf
 from scipy.signal import fftconvolve
 import matplotlib.pyplot as plt
+import os
 
 def sinesweep (f1, f2, T, fs):
 
@@ -57,6 +58,21 @@ def pink(T, fs) -> np.ndarray:
 
     return pink / np.max(np.abs(pink))  # extremely tiny value 1e-9 without normalization
 
+
+def write_audio(fs,audio,title ="audio"):
+
+    # Create directory if it doesn't exist
+    os.makedirs("arreglos", exist_ok=True)
+    # Join the directory and file name using os.path.join()
+    file_path = os.path.join("arreglos", f"{title}_{fs}.npy")
+    np.save(file_path, audio)
+
+    # Create directory if it doesn't exist
+    os.makedirs("audios", exist_ok=True)
+    # Join the directory and file name using os.path.join()
+    file_path = os.path.join("audios", f"{title}.wav")
+    sf.write(file_path, audio, fs)
+
 if __name__=="__main__":
 
     fs = 44100
@@ -69,15 +85,15 @@ if __name__=="__main__":
     pink_noise = pink(T_pink, fs)
     inverse_sweep = inverse_sinesweep(f1, f2, T_sweep, fs)
 
-    # sf.write("sinesweep.wav",sweep,fs)
-    # sf.write("pink.wav",pink_noise,fs)
+    write_audio(fs, sweep, "sinesweep")
+    write_audio(fs, pink_noise, "pink_noise")
 
     # Test recorded sinesweep
     record_sinesweep, fs = sf.read("sinesweep.wav")
     impulse_test = impulse(inverse_sweep, record_sinesweep)
 
 
-    plt.plot(impulse_test)
+    plt.plot(record_sinesweep)
     plt.show()
 
     
