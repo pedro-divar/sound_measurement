@@ -73,6 +73,23 @@ def write_audio(fs,audio,title ="audio"):
     file_path = os.path.join("audios", f"{title}.wav")
     sf.write(file_path, audio, fs)
 
+def sine_sum(freq, duration, fs):
+    max_duration = np.max(duration)
+    total_samples = int(max_duration * fs)
+    t = np.linspace(0, max_duration, total_samples)
+    sine_sum_array = np.zeros(total_samples)
+
+    for i in range(len(freq)):
+        t_aux = np.linspace(0, duration[i], int(fs * duration[i]))
+        sine_to_sum = np.sin(2 * np.pi * freq[i] * t_aux)
+        if len(sine_to_sum) < total_samples:
+            sine_to_sum = np.pad(sine_to_sum, (0, total_samples - len(sine_to_sum)), mode='constant')
+        sine_sum_array += sine_to_sum
+
+    return t, sine_sum_array / np.max(np.abs(sine_sum_array))
+
+
+
 if __name__=="__main__":
 
     fs = 44100
@@ -85,15 +102,12 @@ if __name__=="__main__":
     pink_noise = pink(T_pink, fs)
     inverse_sweep = inverse_sinesweep(f1, f2, T_sweep, fs)
 
-    write_audio(fs, sweep, "sinesweep")
-    write_audio(fs, pink_noise, "pink_noise")
+    # write_audio(fs, sweep, "sinesweep")
+    # write_audio(fs, pink_noise, "pink_noise")
 
-    # Test recorded sinesweep
-    record_sinesweep, fs = sf.read("sinesweep.wav")
-    impulse_test = impulse(inverse_sweep, record_sinesweep)
+    t, sine_summ_array = sine_sum((300,400,700),(1,4,5),44100)
 
-
-    plt.plot(record_sinesweep)
+    plt.plot(t, sine_summ_array)
     plt.show()
 
     
