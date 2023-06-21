@@ -4,11 +4,9 @@ Created on Sun Jun 18 16:16:20 2023
 
 @author: marco
 """
-
-import librosa
 import numpy as np
 
-def spl_time(audio_path, calibration_path):
+def spl_time(sr_audio, audio):
     """
     Calculate the Sound Pressure Level (SPL) over time of an audio signal relative to a calibration signal.
 
@@ -24,15 +22,17 @@ def spl_time(audio_path, calibration_path):
         The calibration signal WAV file should have an RMS value of 1 Pascal (94 dB SPL).
 
     """
-    audio, sr_audio = librosa.load(audio_path, sr=None)
-    calib, sr_calib = librosa.load(calibration_path, sr=None)
 
-    calib_rms = np.sqrt(np.mean(calib**2))  # Root Mean Square (RMS) of calibration signal in Pascal
-
-    audio_pascal = audio / calib_rms  # Convert audio signal to Pascal
-
-    audio_dB = 20 * np.log10(audio_pascal / 20e-6)  # Convert audio signal to decibels (dB) relative to 20 µPa
+    audio_dB = 20 * np.log10(audio / 20e-6)  # Convert audio signal to decibels (dB) relative to 20 µPa
 
     t = np.linspace(0, len(audio) / sr_audio, len(audio))  # Time values corresponding to the audio signal
 
     return t, audio_dB
+
+def calibration(audio, calib):
+    
+    calib_rms = np.sqrt(np.mean(calib**2))  # Root Mean Square (RMS) of calibration signal in Pascal
+
+    print(calib_rms)
+
+    return audio / calib_rms 
