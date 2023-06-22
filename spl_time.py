@@ -32,7 +32,4 @@ def spl_time(sr_audio, audio):
 def calibration(audio, calib):
     
     calib_rms = np.sqrt(np.mean(calib**2))  # Root Mean Square (RMS) of calibration signal in Pascal
-
-    print(calib_rms)
-
     return audio / calib_rms 

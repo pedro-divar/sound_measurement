@@ -12,7 +12,7 @@ def sinesweep (f1, f2, T, fs):
 
     # ESS generation
     sinesweep = np.sin((2 * np.pi * f1 * T / R) * (np.exp(t * R / T) - 1))
-    return sinesweep / np.max(np.abs(sinesweep))
+    return sinesweep
 
 def inverse_sinesweep(f1, f2, T, fs):
 
@@ -21,14 +21,14 @@ def inverse_sinesweep(f1, f2, T, fs):
 
     sinesweep_array = sinesweep(f1, f2, T, fs)
     k = np.exp((t * R) / T)
-    inverse_sinesweep = sinesweep_array[::-1] / k
+    inverse_sinesweep = sinesweep_array[::-1]
+    inverse_sinesweep = inverse_sinesweep / k
 
-    return inverse_sinesweep / np.max(np.abs(inverse_sinesweep))
+    return inverse_sinesweep
 
 def impulse(inverse_sinesweep, record_sinesweep):
 
     impulse = fftconvolve(inverse_sinesweep, record_sinesweep, mode = "same")
-    impulse = impulse / np.max(np.abs(impulse))
 
     return impulse
 

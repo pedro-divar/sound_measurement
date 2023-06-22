@@ -13,26 +13,16 @@ def butter_filter(f_type, fs, order, cutoff_freq):
         cutoff_norm = cutoff_freq/nyquist_freq
         b, a = butter(order, cutoff_norm, btype='highpass')  # Generate coefficients for a highpass Butterworth filter
     elif f_type == 'bandpass':
-        cutoff_norm = [freq / (nyquist_freq) for freq in cutoff_freq]
-        low_freq = cutoff_freq[0]
-        high_freq = cutoff_freq[1]
-        low_norm = low_freq / nyquist_freq
-        high_norm = high_freq / nyquist_freq
-        b, a = butter(order, [low_norm, high_norm], btype='bandpass')  # Generate coefficients for a bandpass Butterworth filter
+        b, a = butter(order, [cutoff_freq[0]/nyquist_freq, cutoff_freq[1]/nyquist_freq], btype='bandpass')  # Generate coefficients for a bandpass Butterworth filter
     elif f_type == 'bandstop':
-        cutoff_norm = [freq / (nyquist_freq) for freq in cutoff_freq]
-        low_freq = cutoff_freq[0]
-        high_freq = cutoff_freq[1]
-        low_norm = low_freq / nyquist_freq
-        high_norm = high_freq / nyquist_freq
-        b, a = butter(order, [low_norm, high_norm], btype='bandstop')  # Generate coefficients for a bandstop Butterworth filter
+        b, a = butter(order, [cutoff_freq[0]/nyquist_freq, cutoff_freq[1]/nyquist_freq], btype='bandstop')  # Generate coefficients for a bandstop Butterworth filter
     else:
         raise ValueError("Invalid filter")  # Raise an error for an invalid filter type
 
     return b, a
 
 # plot filter in magnitud and phase
-def plot_filter_response(b, a, fs):
+def plot_filter_response(b, a, fs,freqc):
     freq = np.linspace(0, 0.5 * fs, 10000)  # Generate a frequency vector
 
     w, h = freqz(b, a, worN=freq, fs=fs)  # Compute the frequency response
@@ -43,7 +33,7 @@ def plot_filter_response(b, a, fs):
     plt.plot(freq, 20 * np.log10(abs(h)))  # Plot the magnitude response in dB
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Magnitude (dB)')
-    plt.title('Frequency Response - Magnitude')
+    plt.title(f'Frequency Response - Magnitude {freqc} Hz')
     plt.ylim(-60, 5)  # Set the y-axis limits
     plt.grid(True)
 
@@ -51,7 +41,7 @@ def plot_filter_response(b, a, fs):
     plt.plot(freq, np.angle(h))  # Plot the phase response in radians
     plt.xlabel('Frequency (Hz)')
     plt.ylabel('Phase (rad)')
-    plt.title('Frequency Response - Phase')
+    plt.title(f'Frequency Response - Phase {freqc} Hz')
     plt.grid(True)
 
     plt.tight_layout()
