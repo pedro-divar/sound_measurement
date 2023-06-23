@@ -23,7 +23,7 @@ def spl_time(sr_audio, audio):
 
     """
 
-    audio_dB = 20 * np.log10(audio / 20e-6)  # Convert audio signal to decibels (dB) relative to 20 µPa
+    audio_dB = 20 * np.log10(abs(audio / 20e-6)+0.0000000000001)  # Convert audio signal to decibels (dB) relative to 20 µPa
 
     t = np.linspace(0, len(audio) / sr_audio, len(audio))  # Time values corresponding to the audio signal
 

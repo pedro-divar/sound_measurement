@@ -2,7 +2,6 @@ import numpy as np
 from numpy.fft import rfft, irfft
 import soundfile as sf
 from scipy.signal import fftconvolve
-import matplotlib.pyplot as plt
 import os
 
 def sinesweep (f1, f2, T, fs):
@@ -87,29 +86,6 @@ def sine_sum(freq, duration, fs):
         sine_sum_array += sine_to_sum
 
     return t, sine_sum_array / np.max(np.abs(sine_sum_array))
-
-
-
-if __name__=="__main__":
-
-    fs = 44100
-    f1 = 100
-    f2 = 16000
-    T_sweep = 30
-    T_pink = 30
-
-    sweep = sinesweep(f1, f2, T_sweep, fs)
-    pink_noise = pink(T_pink, fs)
-    inverse_sweep = inverse_sinesweep(f1, f2, T_sweep, fs)
-
-    # write_audio(fs, sweep, "sinesweep")
-    # write_audio(fs, pink_noise, "pink_noise")
-
-    t, sine_summ_array = sine_sum((300,400,700),(1,4,5),44100)
-
-    plt.plot(t, sine_summ_array)
-    plt.show()
-
     
     
 
