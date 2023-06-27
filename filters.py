@@ -47,5 +47,19 @@ def plot_filter_response(b, a, fs,freqc):
     plt.tight_layout()
     plt.show()
 
-def apply_filter(b, a, signal):
-    return lfilter(b, a, signal)
+def apply_filter_3oct_rms(signal, sr, cutoff_frequencies):
+
+    rms_global = np.zeros(len(cutoff_frequencies), dtype=float)
+    for i in range(len(cutoff_frequencies)):
+    
+        b, a = butter_filter("bandpass", sr, 2, cutoff_frequencies[i])
+        audio_filtered = lfilter(b, a, signal)
+        
+        rms = np.sqrt(np.mean(np.square(audio_filtered)))
+
+        eps = np.finfo(float).eps
+
+        rms_global[i] = 20 * np.log10((rms + eps) / 20e-6)
+
+    return rms_global
+
